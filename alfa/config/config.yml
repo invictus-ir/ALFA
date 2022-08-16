@@ -1,0 +1,52 @@
+scopes:
+  - https://www.googleapis.com/auth/admin.reports.audit.readonly
+
+logs:
+  [
+    "chrome",
+    "admin",
+    "access_transparency",
+    "context_aware_access",
+    "gplus",
+    "data_studio",
+    "mobile",
+    "groups_enterprise",
+    "calendar",
+    "chat",
+    "gcp",
+    "drive",
+    "groups",
+    "keep",
+    "meet",
+    "jamboard",
+    "login",
+    "token",
+    "rules",
+    "saml",
+    "user_accounts",
+  ]
+
+activity_defaults:
+  columns:
+    [
+      "kind",
+      "etag",
+      "ipAddress",
+      "events",
+      "id.time",
+      "id.applicationName",
+      "id.customerId",
+      "actor.callerType",
+      "actor.email",
+      "actor.profileId",
+      "actor.key",
+    ]
+  index:
+    - id.uniqueQualifier
+  
+kill_chain:
+  min_chain_length: 7 # for kill chain discovery (subchains). A subchain only exists if its length >= min_chain_length
+  min_chain_statistic: 0.6 # a subchain only exists if its kcs has a value >= to min_chain_statistic
+  index_reducer: max # max / min / mean. Some events have multiple categories. This is the reducer used to assign a single value to the event.
+  max_slack_width: 5 # how "long" the slack line can be
+  max_slack_depth: 7 # how "low" the slack line can hang

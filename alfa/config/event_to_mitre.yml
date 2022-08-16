@@ -1,0 +1,189 @@
+2sv_disable:
+- account_manipulation.persistence
+2sv_enroll:
+- account_manipulation.persistence
+ADD_PRIVILEGE:
+- cloud_accounts.valid_accounts.privilege_escalation
+ADD_RECOVERY_PHONE:
+- account_manipulation.persistence
+ADD_TO_TRUSTED_OAUTH2_APPS:
+- application_access_token.use_alternate_authentication_material.defense_evasion
+ALERT_CENTER_BATCH_DELETE_ALERTS:
+- cloud_accounts.valid_accounts.defense_evasion
+ALERT_CENTER_DELETE_ALERT:
+- cloud_accounts.valid_accounts.defense_evasion
+ALERT_CENTER_VIEW:
+- cloud_service_dashboard.discovery
+ASSIGN_ROLE:
+- cloud_accounts.valid_accounts.privilege_escalation
+CHANGE_PASSWORD:
+- account_manipulation.persistence
+CHANGE_PASSWORD_ON_NEXT_LOGIN:
+- account_manipulation.persistence
+CHANGE_RECOVERY_EMAIL:
+- account_manipulation.persistence
+CHANGE_RECOVERY_PHONE:
+- account_manipulation.persistence
+CHANGE_USER_ORGANIZATION:
+- account_manipulation.persistence
+CREATE_EMAIL_MONITOR:
+- email_forwarding_rule.email_collection.collection
+CREATE_GMAIL_SETTING:
+- email_forwarding_rule.email_collection.collection
+CREATE_USER:
+- cloud_account.create_account.persistence
+DELETE_USER:
+- account_manipulation.persistence
+DOWNLOAD_REPORT:
+- data_from_information_repositories.collection
+DOWNLOAD_UNMANAGED_USERS_LIST:
+- email_account.account_discovery.discovery
+- cloud_account.account_discovery.discovery
+DOWNLOAD_USERLIST_CSV:
+- email_account.account_discovery.discovery
+- cloud_account.account_discovery.discovery
+EMAIL_LOG_SEARCH:
+- remote_email_collection.email_collection.collection
+ENABLE_USER_IP_WHITELIST:
+- account_manipulation.persistence
+EXPORT_DEVICES:
+- data_from_information_repositories.collection
+GRANT_ADMIN_PRIVILEGE:
+- account_manipulation.persistence
+- cloud_accounts.valid_accounts.privilege_escalation
+GRANT_DELEGATED_ADMIN_PRIVILEGES:
+- account_manipulation.persistence
+GROUP_LIST_DOWNLOAD:
+- cloud_groups.permission_groups_discovery.discovery
+GROUP_MEMBERS_DOWNLOAD:
+- cloud_groups.permission_groups_discovery.discovery
+IMPORT_SSH_PUBLIC_KEY:
+- data_from_information_repositories.collection
+MOBILE_DEVICE_APPROVE:
+- account_manipulation.persistence
+REMOVE_FROM_BLOCKED_OAUTH2_APPS:
+- application_access_token.use_alternate_authentication_material.defense_evasion
+REMOVE_RECOVERY_EMAIL:
+- account_manipulation.persistence
+REMOVE_RECOVERY_PHONE:
+- account_manipulation.persistence
+RESET_SIGNIN_COOKIES:
+- account_manipulation.persistence
+REVOKE_ADMIN_PRIVILEGE:
+- account_manipulation.persistence
+REVOKE_ASP:
+- account_manipulation.persistence
+REVOKE_SECURITY_KEY:
+- account_manipulation.persistence
+TRUST_DOMAIN_OWNED_OAUTH2_APPS:
+- application_access_token.use_alternate_authentication_material.defense_evasion
+- security_software_discovery.software_discovery.discovery
+UNBLOCK_USER_SESSION:
+- account_manipulation.persistence
+UNDELETE_USER:
+- account_manipulation.persistence
+UNENROLL_USER_FROM_STRONG_AUTH:
+- account_manipulation.persistence
+UNENROLL_USER_FROM_TITANIUM:
+- account_manipulation.persistence
+UNSUSPEND_USER:
+- account_manipulation.persistence
+UNTRUST_DOMAIN_OWNED_OAUTH2_APPS:
+- security_software_discovery.software_discovery.discovery
+VIEW_SITE_DETAILS:
+- data_from_information_repositories.collection
+account_disabled_generic:
+- account_manipulation.persistence
+action_complete:
+- security_software_discovery.software_discovery.discovery
+activity:
+- application_access_token.use_alternate_authentication_material.lateral_movement
+add_member:
+- account_manipulation.persistence
+add_member_role:
+- account_manipulation.persistence
+add_security_setting:
+- account_manipulation.persistence
+add_subscription:
+- data_from_information_repositories.collection
+authorize:
+- application_access_token.use_alternate_authentication_material.defense_evasion
+- steal_application_access_token.credential_access
+ban_member_with_moderation:
+- account_manipulation.persistence
+change_security_setting:
+- account_manipulation.persistence
+change_user_access:
+- cloud_accounts.valid_accounts.privilege_escalation
+delete_group:
+- account_manipulation.persistence
+download:
+- data_from_information_repositories.collection
+email_forwarding_change:
+- email_forwarding_rule.email_collection.collection
+email_forwarding_out_of_domain:
+- email_forwarding_rule.email_collection.collection
+join:
+- account_manipulation.persistence
+login_challenge:
+- cloud_accounts.valid_accounts.persistence
+- cloud_accounts.valid_accounts.privilege_escalation
+- cloud_accounts.valid_accounts.defense_evasion
+- password_guessing.brute_force.credential_access
+- password_spraying.brute_force.credential_access
+- credential_stuffing.brute_force.credential_access
+login_failure:
+- cloud_accounts.valid_accounts.persistence
+- password_guessing.brute_force.credential_access
+- password_spraying.brute_force.credential_access
+- credential_stuffing.brute_force.credential_access
+login_success:
+- cloud_accounts.valid_accounts.persistence
+- cloud_accounts.valid_accounts.privilege_escalation
+- cloud_accounts.valid_accounts.defense_evasion
+- password_guessing.brute_force.credential_access
+- password_spraying.brute_force.credential_access
+- credential_stuffing.brute_force.credential_access
+- saml_tokens.forge_web_credentials.credential_access
+login_verification:
+- cloud_accounts.valid_accounts.persistence
+- cloud_accounts.valid_accounts.privilege_escalation
+- cloud_accounts.valid_accounts.defense_evasion
+- password_guessing.brute_force.credential_access
+- password_spraying.brute_force.credential_access
+- credential_stuffing.brute_force.credential_access
+password_change:
+- account_manipulation.persistence
+- account_manipulation.persistence
+recovery_info_change:
+- account_manipulation.persistence
+recovery_phone_edit:
+- account_manipulation.persistence
+remove_info_setting:
+- account_manipulation.persistence
+remove_member:
+- account_manipulation.persistence
+remove_member_role:
+- account_manipulation.persistence
+remove_membership_expiry:
+- account_manipulation.persistence
+remove_security_setting:
+- account_manipulation.persistence
+suspicious_login:
+- cloud_accounts.valid_accounts.persistence
+- cloud_accounts.valid_accounts.privilege_escalation
+- cloud_accounts.valid_accounts.defense_evasion
+suspicious_login_less_secure_app:
+- cloud_accounts.valid_accounts.persistence
+- cloud_accounts.valid_accounts.privilege_escalation
+- cloud_accounts.valid_accounts.defense_evasion
+suspicious_programmatic_login:
+- cloud_accounts.valid_accounts.persistence
+- cloud_accounts.valid_accounts.privilege_escalation
+- cloud_accounts.valid_accounts.defense_evasion
+titanium_change:
+- account_manipulation.persistence
+titanium_unenroll:
+- account_manipulation.persistence
+unban_member:
+- account_manipulation.persistence

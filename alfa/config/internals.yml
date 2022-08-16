@@ -1,0 +1,10 @@
+# Used internally for storing constants
+
+project:
+  dirs:
+    configs: config
+    data: data
+  files:
+    config: config.yml
+    creds: credentials.json
+    token: token.json

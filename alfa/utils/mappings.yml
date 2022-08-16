@@ -1,0 +1,148 @@
+# used by event_mitre_remap.py
+# remapped to /config/event_to_mitre.yml
+
+persistence:
+  account_manipulation:
+    [
+      2sv_disable,
+      2sv_enroll,
+      password_change,
+      recovery_info_change,
+      recovery_phone_edit,
+      titanium_change,
+      titanium_unenroll,
+      GRANT_ADMIN_PRIVILEGE,
+      ADD_RECOVERY_PHONE,
+      REVOKE_ADMIN_PRIVILEGE,
+      REVOKE_ASP,
+      ENABLE_USER_IP_WHITELIST,
+      CHANGE_USER_ORGANIZATION,
+      CHANGE_RECOVERY_EMAIL,
+      CHANGE_RECOVERY_PHONE,
+      GRANT_DELEGATED_ADMIN_PRIVILEGES,
+      CHANGE_PASSWORD,
+      CHANGE_PASSWORD_ON_NEXT_LOGIN,
+      REMOVE_RECOVERY_EMAIL,
+      REMOVE_RECOVERY_PHONE,
+      RESET_SIGNIN_COOKIES,
+      REVOKE_SECURITY_KEY,
+      UNBLOCK_USER_SESSION,
+      UNENROLL_USER_FROM_TITANIUM,
+      DELETE_USER,
+      UNENROLL_USER_FROM_STRONG_AUTH,
+      UNDELETE_USER,
+      UNSUSPEND_USER,
+      add_member,
+      add_member_role,
+      add_security_setting,
+      ban_member_with_moderation,
+      change_security_setting,
+      delete_group,
+      join,
+      remove_membership_expiry,
+      remove_info_setting,
+      remove_member,
+      remove_member_role,
+      remove_security_setting,
+      unban_member,
+      password_change,
+      account_disabled_generic,
+      MOBILE_DEVICE_APPROVE,
+    ]
+
+  create_account:
+    cloud_account: [CREATE_USER]
+
+  valid_accounts:
+    default_accounts: []
+    cloud_accounts:
+      [
+        suspicious_login,
+        suspicious_login_less_secure_app,
+        suspicious_programmatic_login,
+        login_failure,
+        login_challenge,
+        login_verification,
+        login_success,
+      ]
+
+privilege_escalation:
+  valid_accounts:
+    default_accounts: []
+    cloud_accounts:
+      [
+        suspicious_login,
+        suspicious_login_less_secure_app,
+        suspicious_programmatic_login,
+        login_challenge,
+        login_verification,
+        login_success,
+        ADD_PRIVILEGE,
+        ASSIGN_ROLE,
+        GRANT_ADMIN_PRIVILEGE,
+        change_user_access
+      ]
+
+defense_evasion:
+  use_alternate_authentication_material:
+    application_access_token:
+      [
+        ADD_TO_TRUSTED_OAUTH2_APPS,
+        REMOVE_FROM_BLOCKED_OAUTH2_APPS,
+        TRUST_DOMAIN_OWNED_OAUTH2_APPS,
+        authorize,
+      ]
+    web_session_cookie: []
+
+  valid_accounts:
+    default_accounts: []
+    cloud_accounts:
+      [
+        suspicious_login,
+        suspicious_login_less_secure_app,
+        suspicious_programmatic_login,
+        login_challenge,
+        login_verification,
+        login_success,
+        ALERT_CENTER_BATCH_DELETE_ALERTS,
+        ALERT_CENTER_DELETE_ALERT
+      ]
+
+credential_access:
+  brute_force:
+    password_guessing: [login_failure, login_challenge, login_verification, login_success]
+    password_spraying: [login_failure, login_challenge, login_verification, login_success]
+    credential_stuffing: [login_failure, login_challenge, login_verification, login_success]
+
+  forge_web_credentials:
+    saml_tokens: [login_success]
+
+  steal_application_access_token: [authorize]
+  steal_web_session_cookie: []
+  unsecured_credentials: []
+
+discovery:
+  account_discovery:
+    email_account: [DOWNLOAD_UNMANAGED_USERS_LIST, DOWNLOAD_USERLIST_CSV]
+    cloud_account: [DOWNLOAD_UNMANAGED_USERS_LIST, DOWNLOAD_USERLIST_CSV]
+
+  cloud_service_dashboard: [ALERT_CENTER_VIEW]
+  cloud_service_discovery: []
+  permission_groups_discovery:
+    cloud_groups: [GROUP_LIST_DOWNLOAD, GROUP_MEMBERS_DOWNLOAD]
+  software_discovery:
+    security_software_discovery: [UNTRUST_DOMAIN_OWNED_OAUTH2_APPS, TRUST_DOMAIN_OWNED_OAUTH2_APPS, action_complete]
+
+lateral_movement:
+  internal_spearphishing: []
+  use_alternate_authentication_material:
+    application_access_token: [activity]
+    web_session_cookie: []
+
+collection:
+  data_from_information_repositories:
+    [download, add_subscription, IMPORT_SSH_PUBLIC_KEY, VIEW_SITE_DETAILS, DOWNLOAD_REPORT, EXPORT_DEVICES]
+  email_collection:
+    remote_email_collection: [EMAIL_LOG_SEARCH]
+    email_forwarding_rule:
+      [email_forwarding_change, email_forwarding_out_of_domain, CREATE_EMAIL_MONITOR, CREATE_GMAIL_SETTING]
