@@ -145,6 +145,8 @@ class Alfa:
         long_chains = KillChain.join_subchains_loop(subchains)
         event_slices = self.events.get_event_slices(long_chains)
         activity_slices = [e.activities() for e in event_slices]
+        if len(activity_slices) == 0: # prevent possible concat on empty list
+            return activity_slices
         if concat:
             res = reduce(lambda a, b: a.append(b), activity_slices)
             res = res[~res.index.duplicated()]
