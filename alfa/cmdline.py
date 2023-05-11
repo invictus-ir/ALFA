@@ -52,9 +52,6 @@ class Parser:
                 help='directory to load, e.g. --path data/foo')
         pass
 
-    def add_acquire_args(self):
-        pass
-
     def add_analyze_args(self):
         self.parser_analyze.add_argument('-s','--save',action='store_true',
                 help='save data to data/ to load later')
