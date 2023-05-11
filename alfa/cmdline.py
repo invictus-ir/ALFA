@@ -2,7 +2,6 @@
 '''
 holds the parser configuration for the command line
 '''
-import code
 from argparse import ArgumentParser
 from .project_creator import Project
 from .main import *
@@ -11,7 +10,6 @@ import os.path, yaml
 
 from pprint import pprint
 from tabulate import tabulate
-from .utils.summary import summary
 
 banner = '''
 use 'A' to access the Alfa object. A? for more info
@@ -54,6 +52,9 @@ class Parser:
                 help='directory to load, e.g. --path data/foo')
         pass
 
+    def add_acquire_args(self):
+        pass
+
     def add_analyze_args(self):
         self.parser_analyze.add_argument('-s','--save',action='store_true',
                 help='save data to data/ to load later')
@@ -77,6 +78,7 @@ class Parser:
                 help='collect until date (RFC3339 format)')
         subparser.add_argument('-q','--query',type=str,
                 help='supply a yaml file containing query information. e.g. logtype, save path etc.')
+        subparser.add_argument('--nd',action='store_true',help='save data as newline delimited')
 
     def handle_init(self, args):
         project = Project(args.path)
@@ -109,15 +111,14 @@ class Parser:
             A = Alfa.query(**query)
         else:
             A = Alfa.query(**vars(args))
-        # code.interact(banner=banner, local=locals())
         print(banner)
         embed(display_banner=False)
         pass
 
-    def load_query(self,filename: str):
+    def load_query(self,filename: str) -> dict:
       if not os.path.exists(filename):
         print('cannot find file:',filename)
-        return None
+        return dict()
       with open(filename) as f:
         query = yaml.safe_load(f)
       return query

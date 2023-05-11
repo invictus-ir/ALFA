@@ -153,7 +153,7 @@ class Alfa:
             return res
         return activity_slices
 
-    def aoi(self, export: str = None):
+    def aoi(self, export: str = None, nd: bool=False):
         '''
         wrapper around __aoi (above)
         adds the export functionality
@@ -161,6 +161,11 @@ class Alfa:
         '''
         aoi = self.__aoi()
         if export is not None:
-            aoi.to_json(export, orient='records')
+            if nd:
+                with open(export, 'w') as f:
+                    for _, row in aoi.iterrows():
+                        f.write(row.to_json()+'\n')
+            else:
+                aoi.to_json(export, orient='records')
             print('saved to', export)
         return aoi
