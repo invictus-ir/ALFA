@@ -72,7 +72,7 @@ Forensic analysts are advised to review the values and make amendments for their
 These constants are responsible for both the kill chain statistic (kcs) and kill chain discovery (subchains).
 
 ## FAQ
-Want to know more about the statistics and algorithm used for ALFA, we wrote a blog post about it here(insert link)
+Want to know more about the statistics and algorithm used for ALFA, we wrote a blog post about it here(https://medium.com/@invictus-ir/automated-forensic-analysis-of-google-workspace-859ed50c5c92)
 
 ## Known Errors
 ValueError: missing config/credentials.json <br>
