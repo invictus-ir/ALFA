@@ -96,7 +96,7 @@ class Collector:
                 flow = InstalledAppFlow.from_client_secrets_file(
                     creds_path, self.SCOPES
                 )
-                creds = flow.run_local_server(port=PORT)
+                creds = flow.run_local_server(bind_addr="0.0.0.0", open_browser=False, port=PORT)
             with open(token_path, "w") as token:
                 token.write(creds.to_json())
         return creds
