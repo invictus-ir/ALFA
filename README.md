@@ -7,7 +7,7 @@ Authors [Greg Charitonos](https://www.linkedin.com/in/charitonos/) & [BertJanCyb
 A note on supported operating systems, ALFA is tested on several Linux distributions (Debian and Ubuntu).
 Using it on Windows/macOS might work or not, in our experience it's a mixed bag so use at your own risk. 
 
-To run ALFA in a Docker container run  ```docker run -ti -p 8089:8089 -v ./ALFA:/mnt/ALFA --workdir /mnt/ALFA python bash```
+To run ALFA in a Docker container run  ```docker run -ti -p 8089:8089 -v ./ALFA:/mnt/ALFA --workdir /mnt/ALFA python bash```. You may need to increase the memory limit in Docker if you get a sudden ```Killed``` message.
 
 # Installation
 1. Download this project
