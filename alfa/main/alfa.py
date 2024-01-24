@@ -157,15 +157,24 @@ class Alfa:
         '''
         wrapper around __aoi (above)
         adds the export functionality
-        exports as an array of records [ {...}, {...}, ...]
+        exports data ras a JSON file
         '''
-        aoi = self.__aoi()
-        if export is not None:
-            if nd:
-                with open(export, 'w') as f:
-                    for _, row in aoi.iterrows():
-                        f.write(row.to_json()+'\n')
+        if len(self.events) != 0:
+            aoi = self.__aoi()
+            if export is not None:
+                aoi['events'] = aoi['events'].apply(self.list_to_string) #parsing to string so the list doesn't crash when parsed to json
+                if nd:
+                    with open(export, 'w') as f:
+                        for _, row in aoi.iterrows():
+                            f.write(row.to_json()+'\n')
+                else:
+                    aoi.to_json(export, orient="records")
+                print('saved to', export)
+                return aoi
             else:
-                aoi.to_json(export, orient='records')
-            print('saved to', export)
-        return aoi
+                print("[!] Error - please provide an export file as follow : A.aoi(export='example.json')") 
+        else:
+            print("[!] Error - no data to export")
+    
+    def list_to_string(self, lst):
+        return ','.join(map(str, lst))
