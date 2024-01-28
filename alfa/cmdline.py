@@ -11,6 +11,8 @@ import os.path, yaml
 from pprint import pprint
 from tabulate import tabulate
 
+from .utils.summary import summary
+
 banner = '''
 use 'A' to access the Alfa object. A? for more info
 '''
