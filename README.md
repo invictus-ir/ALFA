@@ -1,7 +1,7 @@
 # ALFA
 ## Automated Audit Log Forensic Analysis for Google Workspace
-Copyright (c) 2023 Invictus Incident Response <br>
-Authors [Greg Charitonos](https://www.linkedin.com/in/charitonos/) & [BertJanCyber](https://twitter.com/BertJanCyber) 
+Copyright (c) 2024 Invictus Incident Response <br>
+Original authors [Greg Charitonos](https://www.linkedin.com/in/charitonos/) & [BertJanCyber](https://twitter.com/BertJanCyber) 
 
 # Before you start
 A note on supported operating systems, ALFA is tested on several Linux distributions (Debian and Ubuntu).
