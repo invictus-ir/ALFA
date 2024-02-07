@@ -9,7 +9,7 @@ Using it on Windows/macOS might work or not, in our experience it's a mixed bag 
 
 # Installation
 1. Download this project
-2. Navigate to the folder in your terminal and run ```pip install -e .``` or ```pip3 install -e .```
+2. Navigate to the folder in your terminal and run ```sudo pip install -e .``` or ```sudo pip3 install -e .```
 
 
 ## Using ALFA
