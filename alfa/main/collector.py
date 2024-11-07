@@ -107,6 +107,8 @@ class Collector:
 
     def query_one(
         self,
+        save_path: str,
+        save,
         logtype: str,
         user: str = "all",
         max_results: int = 1000,
@@ -128,15 +130,27 @@ class Collector:
             endTime=end_time,
         )
         page_index = 0
+        result = 0
 
-        result = []
         while req is not None:
             if max_pages and page_index > max_pages:
                 break
+
             self.request_count += 1
             resp = req.execute()
             my_activities = resp.get("items", [])
-            result += my_activities
+            result += len(my_activities)
+
+            if my_activities:  # Only open file if there is data
+                if not (save_path[0] == "/" or save_path.startswith("./")):
+                    save_path = "./" + save_path
+                if not save_path.endswith("/"):
+                    save_path = save_path + "/"
+                full_path = self.__create_path(save_path)
+                with open(rel_path(save_path, logtype + ".json"), "w+") as f:
+                    for activity in my_activities:
+                        f.write(json.dumps(activity) + "\n")
+
             req = activities.list_next(req, resp)
             page_index += 1
         return result
@@ -182,19 +196,15 @@ class Collector:
             save_path = path
         for typ in logtype:
             res = self.query_one(
-                typ, user, max_results, max_pages, start_time, end_time
+                save_path, save, typ, user, max_results, max_pages, start_time, end_time
             )
-            results["activities"][typ] = res
-            total_activity_count += len(res)
-            print(f"{typ:>25}:", f"{len(res):>6}", "activities")
-            if save and len(res):
-                self.save({"activities": res}, save_path, typ + ".json", nd)
+            total_activity_count += res
+            print(f"{typ:>25}:", f"{res:>6}", "activities")               
 
-        if save:
-            print("\n", total_activity_count, "activities saved to:", save_path)
+        print("\n", total_activity_count, "activities saved to:", save_path)
 
         if return_as_df:
-            return self.get_activities_df(results)
+            return self.load(f"{save_path}/{logtype}.json")
         return results
 
     def compute_df(self, activities_json: dict) -> pd.DataFrame:
