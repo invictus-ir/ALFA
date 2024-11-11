@@ -203,7 +203,7 @@ class Collector:
 
         print("\n", total_activity_count, "activities saved to:", save_path)
 
-        if return_as_df:
+        if return_as_df and os.path.isfile(f"{save_path}/{logtype[0]}.json"):
             return self.load(f"{save_path}/{logtype[0]}.json")
         return results
 
