@@ -203,8 +203,8 @@ class Collector:
 
         print("\n", total_activity_count, "activities saved to:", save_path)
 
-        if return_as_df and os.path.isfile(f"{save_path}/{logtype[0]}.json"):
-            return self.load(f"{save_path}/{logtype[0]}.json")
+        if return_as_df:
+            return self.load_all(f"{save_path}")
         return results
 
     def compute_df(self, activities_json: dict) -> pd.DataFrame:
@@ -265,6 +265,7 @@ class Collector:
                 for line in f:
                     activities.append(json.loads(line))
                 data = {'activities': activities}
+                print(data)
         if as_activities_df:
             return self.get_activities_df(data)
         return data
