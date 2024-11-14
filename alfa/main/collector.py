@@ -265,7 +265,6 @@ class Collector:
                 for line in f:
                     activities.append(json.loads(line))
                 data = {'activities': activities}
-                print(data)
         if as_activities_df:
             return self.get_activities_df(data)
         return data
