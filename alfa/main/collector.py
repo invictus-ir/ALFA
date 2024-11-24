@@ -147,7 +147,7 @@ class Collector:
                 if not save_path.endswith("/"):
                     save_path = save_path + "/"
                 full_path = self.__create_path(save_path)
-                with open(rel_path(save_path, logtype + ".json"), "w+") as f:
+                with open(rel_path(save_path, logtype + ".json"), "a") as f:
                     for activity in my_activities:
                         f.write(json.dumps(activity) + "\n")
 
@@ -199,7 +199,7 @@ class Collector:
                 save_path, save, typ, user, max_results, max_pages, start_time, end_time
             )
             total_activity_count += res
-            print(f"{typ:>25}:", f"{res:>6}", "activities")               
+            print(f"{typ:>25}:", f"{res:>6}", "activities")
 
         print("\n", total_activity_count, "activities saved to:", save_path)
 
@@ -251,11 +251,11 @@ class Collector:
         return data
 
     def load(self, json_file: str, as_activities_df: bool = True):
-        '''
+        """
         loads a dataset from a json file. Expects to be normal JSON.
         If it encounters a JSONDecodeError, assumes it is in NDJSON format (newline delimited)
         and attempts to access each record separately.
-        '''
+        """
         with open(json_file) as f:
             try:
                 data = json.load(f)
@@ -264,7 +264,7 @@ class Collector:
                 activities = []
                 for line in f:
                     activities.append(json.loads(line))
-                data = {'activities': activities}
+                data = {"activities": activities}
         if as_activities_df:
             return self.get_activities_df(data)
         return data
