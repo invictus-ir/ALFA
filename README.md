@@ -49,15 +49,7 @@ While it might be possible to use it on Windows or macOS, results can vary, so p
      ```bash
      source alfa/bin/activate
      ```
-
-3. **Download the ALFA Project**
-   Obtain the ALFA project files. You can clone it from its Git repository:
-   ```bash
-   git clone <ALFA_REPOSITORY_URL>
-   cd <ALFA_PROJECT_FOLDER>
-   ```
-
-4. **Install ALFA**
+3. **Install ALFA**
    Inside the folder where the ALFA project is located, install it using `pip`:
    ```bash
    pip install -e .
@@ -67,8 +59,8 @@ While it might be possible to use it on Windows or macOS, results can vary, so p
    sudo pip install -e .
    ```
 
-5. **Verify Installation**
-   After installation, you can verify that ALFA is installed by attempting to run its command-line tool `alfa` or testing any of its functionality.
+4. **Verify Installation**
+   After installation, you can verify that ALFA is installed by attempting to run its command-line tool `alfa`.
 
 ## Using ALFA
 NOTE: For retrieving credentials.json, please see ```CREDENTIALS.md```
