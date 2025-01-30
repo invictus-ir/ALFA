@@ -4,13 +4,63 @@ Copyright (c) 2024 Invictus Incident Response <br>
 Original authors [Greg Charitonos](https://www.linkedin.com/in/charitonos/) & [BertJanCyber](https://twitter.com/BertJanCyber) 
 
 # Before you start
-A note on supported operating systems, ALFA is tested on several Linux distributions (Debian and Ubuntu).
-Using it on Windows/macOS might work or not, in our experience it's a mixed bag so use at your own risk. 
+A note on supported operating systems, ALFA is tested on several Linux distributions (Debian and Ubuntu).<br>
+While it might be possible to use it on Windows or macOS, results can vary, so proceed at your own risk.
 
 # Installation
 1. Download this project
 2. Navigate to the folder in your terminal and run ```sudo pip install -e .``` or ```sudo pip3 install -e .```
 
+## Installation on macOS
+1. **Install Python 3.9 using `pyenv`**
+   ALFA works best with Python 3.9. You can use `pyenv` to manage and install this version.
+   - If you haven’t installed `pyenv` yet, you can do so using Homebrew:
+     ```bash
+     brew install pyenv
+     ```
+   - Set up `pyenv` in your shell by adding the following to your shell configuration file (e.g., `~/.zshrc` or `~/.bashrc`):
+     ```bash
+     export PYENV_ROOT="$HOME/.pyenv"
+     export PATH="$PYENV_ROOT/bin:$PATH"
+     eval "$(pyenv init --path)"
+     ```
+     After updating the file, reload your shell:
+     ```bash
+     source ~/.zshrc  # or source ~/.bashrc
+     ```
+   - Install Python 3.9 using `pyenv`:
+     ```bash
+     pyenv install 3.9
+     ```
+   - Set Python 3.9 as the current version:
+     ```bash
+     pyenv global 3.9
+     ```
+     or just for the current session:
+    ```bash
+     pyenv shell 3.9
+     ```
+2. **(Optional) Create a Virtual Environment**
+   It’s a good practice to run projects in a virtual environment to keep dependencies isolated. Using the 3.9 version of Python you just set, create a virtual environment:
+   ```bash
+   python -m venv alfa
+   ```
+   - Activate the virtual environment:
+     ```bash
+     source alfa/bin/activate
+     ```
+3. **Install ALFA**
+   Inside the folder where the ALFA project is located, install it using `pip`:
+   ```bash
+   pip install -e .
+   ```
+   If you’re not using a virtual environment, you may need `sudo`:
+   ```bash
+   sudo pip install -e .
+   ```
+
+4. **Verify Installation**
+   After installation, you can verify that ALFA is installed by attempting to run its command-line tool `alfa`.
 
 ## Using ALFA
 NOTE: For retrieving credentials.json, please see ```CREDENTIALS.md```
