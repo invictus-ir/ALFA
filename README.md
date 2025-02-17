@@ -125,12 +125,16 @@ These constants are responsible for both the kill chain statistic (kcs) and kill
 Want to know more about the statistics and algorithm used for ALFA, we wrote a blog post about it here(https://medium.com/@invictus-ir/automated-forensic-analysis-of-google-workspace-859ed50c5c92)
 
 ## Known Errors
-ValueError: missing config/credentials.json <br>
+### ValueError: missing config/credentials.json <br>
 You have to add a credentials.json file to the project folder in the 'config' subdirectory. Instructions in the 'CREDENTIALS.md' file. 
 
-OSError: [Errno 98] Address already in use
+### OSError: [Errno 98] Address already in use
 This means that port 8089 is already in use by another application, this could happen if you have a webserver running on this port and also Splunk uses port 8089 by default. Solution is to (temporarily) stop that port from being used as it's required for the authentication flow that the port is available. 
 
-ValueError: Authorized user info was not in the expected format, missing fields refresh_token.
+### ValueError: Authorized user info was not in the expected format, missing fields refresh_token.
 Sometimes the authorization info needs to be updated the easiest way to do this is removing the 'token.json' from the project_name/config folder. And then rerunning the command. If that still gives issues then remove token.json and credentials.json and reregister the OAuth application as described in 
 ```CREDENTIALS.MD```
+
+### Access is blocked: This app's request is invalid // Error 400: redirect_uri_mismatch
+Make sure you have the trailing backslash (``/``) in the ``Authorized redirect URIs`` URI ``http://localhost:8089`` of your application's ``OAuth 2.0 Client IDs``.
+![image](https://github.com/user-attachments/assets/22ef159c-9f94-43fa-804f-349a13227449)
