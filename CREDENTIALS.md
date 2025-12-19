@@ -1,6 +1,6 @@
 # Getting Your Credentials
 This step by step guide takes you through the process of obtaining your API credentials.
-You can also watch our YouTube video where we show you the whole process **insert link** <br><br>
+You can also watch [our YouTube video](https://youtu.be/Vk9ySK4E1S4?si=v6YfxnmsLL8hro21) where we show you the whole process <br><br>
 
 It is recommended that you register a new project for log collection, separate from other projects.
 
