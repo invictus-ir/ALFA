@@ -2,3 +2,6 @@
 .vscode/*
 test/*
 __pycache__
+*.json
+ALFA.egg-info/
+**/config.yml
