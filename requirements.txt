@@ -12,7 +12,7 @@ google-auth-httplib2==0.1.0
 google-auth-oauthlib==0.4.6
 googleapis-common-protos==1.54.0
 httplib2==0.20.2
-idna==3.3
+idna==3.7
 ipython==8.4.0
 jedi==0.18.1
 matplotlib-inline==0.1.3
