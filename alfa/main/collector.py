@@ -10,7 +10,7 @@ import json
 from json.decoder import JSONDecodeError
 import os
 import os.path
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pandas as pd
 from google.auth.transport.requests import Request
@@ -195,8 +195,16 @@ class Collector:
         if path:
             save_path = path
         for typ in logtype:
+            if typ == "gmail" and not start_time:
+                # gmail log requires start_time to be set to 30 days ago max
+                start = (datetime.now(tz=timezone.utc) - pd.Timedelta(days=30)).isoformat()
+                end = end_time or datetime.now(tz=timezone.utc).isoformat()
+            else:
+                start = start_time
+                end = end_time
+
             res = self.query_one(
-                save_path, save, typ, user, max_results, max_pages, start_time, end_time
+                save_path, save, typ, user, max_results, max_pages, start, end
             )
             total_activity_count += res
             print(f"{typ:>25}:", f"{res:>6}", "activities")

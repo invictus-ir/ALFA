@@ -24,6 +24,10 @@ logs:
     "rules",
     "saml",
     "user_accounts",
+    "gmail",
+    "vault",
+    "gemini_in_workspace_apps",
+    "classroom",
   ]
 
 activity_defaults:
