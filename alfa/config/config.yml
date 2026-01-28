@@ -28,6 +28,17 @@ logs:
     "vault",
     "gemini_in_workspace_apps",
     "classroom",
+    "meet_hardware",
+    "admin_data_action",
+    "ldap",
+    "profile",
+    "access_evaluation",
+    "assignments",
+    "contacts",
+    "cloud_search",
+    "data_migration",
+    "directory_sync",
+    "tasks"
   ]
 
 activity_defaults:
