@@ -1,6 +1,6 @@
 # ALFA
 ## Automated Audit Log Forensic Analysis for Google Workspace
-Copyright (c) 2025 Invictus Incident Response <br>
+Copyright (c) 2026 Invictus Incident Response <br>
 Original authors [Greg Charitonos](https://www.linkedin.com/in/charitonos/) & [BertJanCyber](https://twitter.com/BertJanCyber) maintained by Invictus Incident Response
 
 # Before you start

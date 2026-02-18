@@ -81,7 +81,8 @@ class Parser:
 
     def handle_init(self, args):
         project = Project(args.path)
-        print('now run "alfa analyze"!')
+        print('---')
+        print('Please copy your credentials.json to config/credentials.json and run "alfa acquire"!')
         pass
 
     def handle_load(self, args):
