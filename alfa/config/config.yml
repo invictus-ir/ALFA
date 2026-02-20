@@ -24,7 +24,7 @@ logs:
     "rules",
     "saml",
     "user_accounts",
-    "gmail",
+    #"gmail", (this only works if you set the start and endtime and maximum of  30 days)
     "vault",
     "gemini_in_workspace_apps",
     "classroom",

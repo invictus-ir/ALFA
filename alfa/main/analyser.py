@@ -20,18 +20,19 @@ class Analyser:
   
   def analyse_all_files(self, email: list=None,filter=True, subdir=None) -> pd.DataFrame:
     '''Takes all files, analyses and concats into a single DataFrame'''
-    df = pd.DataFrame()
+    dfs = []
     for log in config['logs']:
       log_df = self.analyse_from_file(log,email,filter=filter, subdir=subdir)
-      df = df.append(log_df)
-    return df
+      dfs.append(log_df)
+    return pd.concat(dfs) if dfs else pd.DataFrame()
+
   def analyse_all(self,log_dict,email: list=None,filter=True) -> pd.DataFrame:
     '''takes dict of logs, and analyses and concats them into a single DataFrame'''
-    df = pd.DataFrame()
+    dfs = []
     for log in log_dict:
       log_df = self.analyse(log_dict[log],email,filter=filter)
-      df = df.append(log_df)
-    return df
+      dfs.append(log_df)
+    return pd.concat(dfs) if dfs else pd.DataFrame()
     
   def load_file(self,logtype,subdir=None):
     '''Loads file from data/ directory. If a subdir is given, will load from data/<subdir>'''
