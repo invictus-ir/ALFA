@@ -267,11 +267,16 @@ class Collector:
         with open(json_file) as f:
             try:
                 data = json.load(f)
+                if isinstance(data, dict) and "activities" not in data:
+                    data = {"activities": [data]}
+                elif isinstance(data, list):
+                    data = {"activities": data}
             except JSONDecodeError:
                 f.seek(0)
                 activities = []
                 for line in f:
-                    activities.append(json.loads(line))
+                    if line.strip():
+                        activities.append(json.loads(line))
                 data = {"activities": activities}
         if as_activities_df:
             return self.get_activities_df(data)

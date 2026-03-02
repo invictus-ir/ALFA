@@ -17,8 +17,6 @@ class Project:
     print('initializing project:',abs_path)
     self.__main__()
     print('complete')
-    print('---')
-    print('Please copy your credentials.json to config/credentials.json')
     pass
 
   def __check_can_overwrite(self,path: str):

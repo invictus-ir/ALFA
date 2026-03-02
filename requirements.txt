@@ -6,7 +6,7 @@ charset-normalizer==2.0.10
 decorator==5.1.1
 executing==0.8.3
 google-api-core==2.29.0
-google-api-python-client==2.188.0
+google-api-python-client>=2.150.0
 google-auth==2.47.0
 google-auth-httplib2==0.3.0
 google-auth-oauthlib==1.2.4
@@ -16,9 +16,9 @@ idna==3.7
 ipython==8.10.0
 jedi==0.18.1
 matplotlib-inline==0.1.3
-numpy>=1.26.0,<2.0.0
+numpy>=1.26.0
 oauthlib==3.2.2
-pandas==1.3.5
+pandas>=2.2.0
 parso==0.8.3
 pexpect==4.8.0
 pickleshare==0.7.5

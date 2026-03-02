@@ -1,12 +1,12 @@
 #!/bin/python3
 import os
+import pandas as pd
 from .analyser import Analyser
 from .activity import Activities, Activity
 from .event import Events
 from pandas.core.series import Series
 from pandas import to_datetime
 from typing import Tuple, Union
-from functools import reduce
 
 from ..config import config
 from .kill_chain import KillChain
@@ -148,7 +148,7 @@ class Alfa:
         if len(activity_slices) == 0: # prevent possible concat on empty list
             return activity_slices
         if concat:
-            res = reduce(lambda a, b: a.append(b), activity_slices)
+            res = pd.concat(activity_slices)
             res = res[~res.index.duplicated()]
             return res
         return activity_slices
