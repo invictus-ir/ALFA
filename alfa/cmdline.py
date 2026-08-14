@@ -8,30 +8,15 @@ from .main import *
 from IPython import embed
 import os.path, yaml
 
-from dateutil import parser as dateparser
-from dateutil import tz
-
 from pprint import pprint
 from tabulate import tabulate
 
+from .utils.dates import normalize_datetime
 from .utils.summary import summary
 
 banner = '''
 use 'A' to access the Alfa object. A? for more info
 '''
-
-
-def parse_rfc3339(value: str) -> str:
-    '''
-    Parses a user-supplied date/time string (RFC3339 or otherwise) and
-    returns it as an RFC3339 string in UTC, defaulting to UTC when no
-    timezone is given. Raising ValueError here lets argparse report a
-    clean usage error instead of the API rejecting a malformed value later.
-    '''
-    dt = dateparser.parse(value)
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=tz.tzutc())
-    return dt.isoformat()
 
 class Parser:
     def __init__(self):

@@ -25,6 +25,7 @@ from googleapiclient.errors import HttpError
 
 from ..config import config
 from ..config.__internals__ import internals
+from ..utils.dates import normalize_datetime
 from ..utils.path import *
 
 PORT = 8089
@@ -69,7 +70,7 @@ class Collector:
     RETRY_MAX_DELAY = 60
 
     GMAIL_MAX_RANGE_DAYS = 30
-    GMAIL_MAX_LOOKBACK_DAYS = 180
+    MAX_LOOKBACK_DAYS = 180
 
     def __init__(self) -> None:
         self.api_ready = False
@@ -239,6 +240,9 @@ class Collector:
         elif type(logtype) == str:
             logtype = [logtype]  # convert to list of len 1
 
+        start_time = normalize_datetime(start_time)
+        end_time = normalize_datetime(end_time)
+
         results = {"activities": dict()}
         total_activity_count = 0
         save_path = self.__default_path_name()
@@ -249,47 +253,44 @@ class Collector:
             save_path = "./" + save_path
         if not save_path.endswith("/"):
             save_path = save_path + "/"
-        self.__create_path(save_path)  # always create it, even if every logtype comes back empty
+        self.__create_path(save_path)
 
         def date_range_for(typ):
-            if typ != "gmail":
-                return start_time, end_time
-
-            if not start_time and not end_time:
+            if typ == "gmail" and not start_time and not end_time:
                 # no dates given: default to the maximum allowed 30-day window
                 start = (datetime.now(tz=timezone.utc) - pd.Timedelta(days=self.GMAIL_MAX_RANGE_DAYS)).isoformat()
                 end = datetime.now(tz=timezone.utc).isoformat()
                 return start, end
 
-            if not start_time or not end_time:
+            if typ == "gmail" and (not start_time or not end_time):
                 raise ValueError(
                     "gmail logs require both start_time and end_time to be set "
                     f"(max {self.GMAIL_MAX_RANGE_DAYS}-day range); only one was provided."
                 )
 
-            start_dt = dateparser.parse(start_time)
-            end_dt = dateparser.parse(end_time)
+            now = datetime.now(tz=timezone.utc)
+            for label, value in (("start_time", start_time), ("end_time", end_time)):
+                if not value:
+                    continue
+                lookback_seconds = (now - dateparser.parse(value)).total_seconds()
+                if lookback_seconds > self.MAX_LOOKBACK_DAYS * 86400:
+                    raise ValueError(
+                        f"{typ} logs only cover the last {self.MAX_LOOKBACK_DAYS} days; "
+                        f"requested {label} is {lookback_seconds / 86400:.1f} days in the past."
+                    )
 
-            span_seconds = (end_dt - start_dt).total_seconds()
-            if span_seconds < 0:
-                raise ValueError("gmail logs require start_time to be before end_time.")
-            if span_seconds > self.GMAIL_MAX_RANGE_DAYS * 86400:
-                raise ValueError(
-                    f"gmail logs support a maximum {self.GMAIL_MAX_RANGE_DAYS}-day range; "
-                    f"requested range is {span_seconds / 86400:.1f} days."
-                )
+            if typ == "gmail":
+                span_seconds = (dateparser.parse(end_time) - dateparser.parse(start_time)).total_seconds()
+                if span_seconds < 0:
+                    raise ValueError("gmail logs require start_time to be before end_time.")
+                if span_seconds > self.GMAIL_MAX_RANGE_DAYS * 86400:
+                    raise ValueError(
+                        f"gmail logs support a maximum {self.GMAIL_MAX_RANGE_DAYS}-day range; "
+                        f"requested range is {span_seconds / 86400:.1f} days."
+                    )
 
-            lookback_seconds = (datetime.now(tz=timezone.utc) - end_dt).total_seconds()
-            if lookback_seconds > self.GMAIL_MAX_LOOKBACK_DAYS * 86400:
-                raise ValueError(
-                    f"gmail logs only cover the last {self.GMAIL_MAX_LOOKBACK_DAYS} days; "
-                    f"requested end_time is {lookback_seconds / 86400:.1f} days in the past."
-                )
             return start_time, end_time
 
-        # resolve (and validate) every logtype's date range up front, before
-        # spawning any threads - so a known-bad request (e.g. gmail with an
-        # invalid range) fails immediately instead of after an HTTP round trip
         date_ranges = {typ: date_range_for(typ) for typ in logtype}
 
         first_error = None
