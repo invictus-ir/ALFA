@@ -8,6 +8,9 @@ from .main import *
 from IPython import embed
 import os.path, yaml
 
+from dateutil import parser as dateparser
+from dateutil import tz
+
 from pprint import pprint
 from tabulate import tabulate
 
@@ -16,6 +19,19 @@ from .utils.summary import summary
 banner = '''
 use 'A' to access the Alfa object. A? for more info
 '''
+
+
+def parse_rfc3339(value: str) -> str:
+    '''
+    Parses a user-supplied date/time string (RFC3339 or otherwise) and
+    returns it as an RFC3339 string in UTC, defaulting to UTC when no
+    timezone is given. Raising ValueError here lets argparse report a
+    clean usage error instead of the API rejecting a malformed value later.
+    '''
+    dt = dateparser.parse(value)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=tz.tzutc())
+    return dt.isoformat()
 
 class Parser:
     def __init__(self):
@@ -71,10 +87,10 @@ class Parser:
                 help='max results per page. max value = 1000 (default)')
         subparser.add_argument('--max-pages',type=int,required=False,default=None,
                 help='max number of pages to collect (default = as many as possible)')
-        subparser.add_argument('-st','--start-time',type=str,required=False,default=None,
-                help='start collecting from date (RFC3339 format)')
-        subparser.add_argument('-et','--end-time',type=str,required=False,default=None,
-                help='collect until date (RFC3339 format)')
+        subparser.add_argument('-st','--start-time',type=parse_rfc3339,required=False,default=None,
+                help='start collecting from date (any common format, e.g. "2025-01-01" or "2025-01-01T00:00:00Z"; assumed UTC if no timezone given)')
+        subparser.add_argument('-et','--end-time',type=parse_rfc3339,required=False,default=None,
+                help='collect until date (any common format, e.g. "2025-01-01" or "2025-01-01T00:00:00Z"; assumed UTC if no timezone given)')
         subparser.add_argument('-q','--query',type=str,
                 help='supply a yaml file containing query information. e.g. logtype, save path etc.')
         subparser.add_argument('--nd',action='store_true',help='save data as newline delimited')
