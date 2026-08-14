@@ -10,6 +10,9 @@ import json
 from json.decoder import JSONDecodeError
 import os
 import os.path
+import threading
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 
 import pandas as pd
@@ -17,6 +20,7 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import Resource, build
+from googleapiclient.errors import HttpError
 
 from ..config import config
 from ..config.__internals__ import internals
@@ -58,9 +62,15 @@ class Collector:
     """
 
     SCOPES = config["scopes"]
+    RETRY_MAX_ATTEMPTS = 5
+    RETRY_INITIAL_DELAY = 1
+    RETRY_BACKOFF_FACTOR = 2
+    RETRY_MAX_DELAY = 60
 
     def __init__(self) -> None:
         self.api_ready = False
+        self._request_count_lock = threading.Lock()
+        self._thread_local = threading.local()
         pass
 
     def __init_api_creds(self):
@@ -76,9 +86,7 @@ class Collector:
     def __create_path(self, path: str):
         """create path if non-existent"""
         full_path = rel_path(path)
-        if os.path.exists(full_path):
-            return full_path
-        os.makedirs(full_path)
+        os.makedirs(full_path, exist_ok=True)
         return full_path
 
     def get_credentials(self):
@@ -105,6 +113,34 @@ class Collector:
         service = build("admin", "reports_v1", credentials=self.creds)
         return service
 
+    def _get_thread_service(self):
+        """
+        Returns a service instance private to the calling thread
+        httplib2 (used internally by googleapiclient) is not thread-safe, so concurrent logtype fetches must not share self.service
+        Each thread builds and caches its own connection here
+        """
+        if not hasattr(self._thread_local, "service"):
+            self._thread_local.service = build("admin", "reports_v1", credentials=self.creds)
+        return self._thread_local.service
+
+    def _execute_with_retry(self, req):
+        """
+        Executes an API request, retrying with exponential backoff on rate limiting (429) and server errors (5xx)
+        Other errors (e.g. bad request, invalid applicationName) are raised immediately
+        """
+        delay = self.RETRY_INITIAL_DELAY
+        for attempt in range(1, self.RETRY_MAX_ATTEMPTS + 1):
+            try:
+                return req.execute()
+            except HttpError as e:
+                status = e.resp.status
+                if status != 429 and not (500 <= status < 600):
+                    raise
+                if attempt == self.RETRY_MAX_ATTEMPTS:
+                    raise
+                time.sleep(delay)
+                delay = min(delay * self.RETRY_BACKOFF_FACTOR, self.RETRY_MAX_DELAY)
+
     def query_one(
         self,
         save_path: str,
@@ -121,7 +157,7 @@ class Collector:
         used by the .query method
         collects activities from a single logtype, and returns them as a list
         """
-        activities = self.service.activities()
+        activities = self._get_thread_service().activities()
         req = activities.list(
             userKey=user,
             applicationName=logtype,
@@ -132,27 +168,35 @@ class Collector:
         page_index = 0
         result = 0
 
-        while req is not None:
-            if max_pages and page_index > max_pages:
-                break
+        if not (save_path[0] == "/" or save_path.startswith("./")):
+            save_path = "./" + save_path
+        if not save_path.endswith("/"):
+            save_path = save_path + "/"
 
-            self.request_count += 1
-            resp = req.execute()
-            my_activities = resp.get("items", [])
-            result += len(my_activities)
+        f = None
+        try:
+            while req is not None:
+                if max_pages and page_index > max_pages:
+                    break
 
-            if my_activities:  # Only open file if there is data
-                if not (save_path[0] == "/" or save_path.startswith("./")):
-                    save_path = "./" + save_path
-                if not save_path.endswith("/"):
-                    save_path = save_path + "/"
-                full_path = self.__create_path(save_path)
-                with open(rel_path(save_path, logtype + ".json"), "a") as f:
+                with self._request_count_lock:
+                    self.request_count += 1
+                resp = self._execute_with_retry(req)
+                my_activities = resp.get("items", [])
+                result += len(my_activities)
+
+                if my_activities:
+                    if f is None:  # only create/open the file once there is data
+                        self.__create_path(save_path)
+                        f = open(rel_path(save_path, logtype + ".json"), "a")
                     for activity in my_activities:
                         f.write(json.dumps(activity) + "\n")
 
-            req = activities.list_next(req, resp)
-            page_index += 1
+                req = activities.list_next(req, resp)
+                page_index += 1
+        finally:
+            if f is not None:
+                f.close()
         return result
 
     def query(
@@ -167,6 +211,7 @@ class Collector:
         nd=False,
         path=None,
         return_as_df=True,
+        num_threads: int = 10,
         **kwargs,
     ) -> list:
         """
@@ -180,6 +225,7 @@ class Collector:
           end_time: in rfc3339 format
           save: should this query be saved directly to storage
           path: directory to save under
+          num_threads: number of logtypes to fetch concurrently (default 10)
         """
         if not self.api_ready:  # first initialize the api
             self.__init_api_creds()
@@ -194,20 +240,38 @@ class Collector:
         save_path = self.__default_path_name()
         if path:
             save_path = path
-        for typ in logtype:
+
+        def date_range_for(typ):
             if typ == "gmail" and not start_time:
                 # gmail log requires start_time to be set to 30 days ago max
                 start = (datetime.now(tz=timezone.utc) - pd.Timedelta(days=30)).isoformat()
                 end = end_time or datetime.now(tz=timezone.utc).isoformat()
-            else:
-                start = start_time
-                end = end_time
+                return start, end
+            return start_time, end_time
 
-            res = self.query_one(
-                save_path, save, typ, user, max_results, max_pages, start, end
-            )
-            total_activity_count += res
-            print(f"{typ:>25}:", f"{res:>6}", "activities")
+        first_error = None
+        with ThreadPoolExecutor(max_workers=num_threads) as executor:
+            futures = {
+                executor.submit(
+                    self.query_one, save_path, save, typ, user, max_results,
+                    max_pages, *date_range_for(typ)
+                ): typ
+                for typ in logtype
+            }
+            for future in as_completed(futures):
+                typ = futures[future]
+                try:
+                    res = future.result()
+                except Exception as e:
+                    if first_error is None:
+                        first_error = e
+                    print(f"{typ:>25}: FAILED - {e}")
+                    continue
+                total_activity_count += res
+                print(f"{typ:>25}:", f"{res:>6}", "activities")
+
+        if first_error is not None:
+            raise first_error
 
         print("\n", total_activity_count, "activities saved to:", save_path)
 

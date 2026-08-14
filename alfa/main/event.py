@@ -4,7 +4,7 @@ from .activity import Activity
 
 
 class Events(DataFrame):
-    '''
+    r'''
     Events is a dataframe containing events. It has a custom property: parent, which references its Mitre parent.
 
     Each Event *class* is dynamically generated from the current Events instance. This is because each instance of the class needs a reference
