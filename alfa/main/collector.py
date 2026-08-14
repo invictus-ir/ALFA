@@ -70,7 +70,6 @@ class Collector:
     def __init__(self) -> None:
         self.api_ready = False
         self._request_count_lock = threading.Lock()
-        self._print_lock = threading.Lock()
         self._thread_local = threading.local()
         pass
 
@@ -250,6 +249,7 @@ class Collector:
                 return start, end
             return start_time, end_time
 
+        first_error = None
         with ThreadPoolExecutor(max_workers=num_threads) as executor:
             futures = {
                 executor.submit(
@@ -260,10 +260,18 @@ class Collector:
             }
             for future in as_completed(futures):
                 typ = futures[future]
-                res = future.result()
+                try:
+                    res = future.result()
+                except Exception as e:
+                    if first_error is None:
+                        first_error = e
+                    print(f"{typ:>25}: FAILED - {e}")
+                    continue
                 total_activity_count += res
-                with self._print_lock:
-                    print(f"{typ:>25}:", f"{res:>6}", "activities")
+                print(f"{typ:>25}:", f"{res:>6}", "activities")
+
+        if first_error is not None:
+            raise first_error
 
         print("\n", total_activity_count, "activities saved to:", save_path)
 
