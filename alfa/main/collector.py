@@ -16,6 +16,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 
 import pandas as pd
+from dateutil import parser as dateparser
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -24,6 +25,7 @@ from googleapiclient.errors import HttpError
 
 from ..config import config
 from ..config.__internals__ import internals
+from ..utils.dates import normalize_datetime
 from ..utils.path import *
 
 PORT = 8089
@@ -66,6 +68,9 @@ class Collector:
     RETRY_INITIAL_DELAY = 1
     RETRY_BACKOFF_FACTOR = 2
     RETRY_MAX_DELAY = 60
+
+    GMAIL_MAX_RANGE_DAYS = 30
+    MAX_LOOKBACK_DAYS = 180
 
     def __init__(self) -> None:
         self.api_ready = False
@@ -235,26 +240,65 @@ class Collector:
         elif type(logtype) == str:
             logtype = [logtype]  # convert to list of len 1
 
+        start_time = normalize_datetime(start_time)
+        end_time = normalize_datetime(end_time)
+
         results = {"activities": dict()}
         total_activity_count = 0
         save_path = self.__default_path_name()
         if path:
             save_path = path
 
+        if not (save_path[0] == "/" or save_path.startswith("./")):
+            save_path = "./" + save_path
+        if not save_path.endswith("/"):
+            save_path = save_path + "/"
+        self.__create_path(save_path)
+
         def date_range_for(typ):
-            if typ == "gmail" and not start_time:
-                # gmail log requires start_time to be set to 30 days ago max
-                start = (datetime.now(tz=timezone.utc) - pd.Timedelta(days=30)).isoformat()
-                end = end_time or datetime.now(tz=timezone.utc).isoformat()
+            if typ == "gmail" and not start_time and not end_time:
+                # no dates given: default to the maximum allowed 30-day window
+                start = (datetime.now(tz=timezone.utc) - pd.Timedelta(days=self.GMAIL_MAX_RANGE_DAYS)).isoformat()
+                end = datetime.now(tz=timezone.utc).isoformat()
                 return start, end
+
+            if typ == "gmail" and (not start_time or not end_time):
+                raise ValueError(
+                    "gmail logs require both start_time and end_time to be set "
+                    f"(max {self.GMAIL_MAX_RANGE_DAYS}-day range); only one was provided."
+                )
+
+            now = datetime.now(tz=timezone.utc)
+            for label, value in (("start_time", start_time), ("end_time", end_time)):
+                if not value:
+                    continue
+                lookback_seconds = (now - dateparser.parse(value)).total_seconds()
+                if lookback_seconds > self.MAX_LOOKBACK_DAYS * 86400:
+                    raise ValueError(
+                        f"{typ} logs only cover the last {self.MAX_LOOKBACK_DAYS} days; "
+                        f"requested {label} is {lookback_seconds / 86400:.1f} days in the past."
+                    )
+
+            if typ == "gmail":
+                span_seconds = (dateparser.parse(end_time) - dateparser.parse(start_time)).total_seconds()
+                if span_seconds < 0:
+                    raise ValueError("gmail logs require start_time to be before end_time.")
+                if span_seconds > self.GMAIL_MAX_RANGE_DAYS * 86400:
+                    raise ValueError(
+                        f"gmail logs support a maximum {self.GMAIL_MAX_RANGE_DAYS}-day range; "
+                        f"requested range is {span_seconds / 86400:.1f} days."
+                    )
+
             return start_time, end_time
+
+        date_ranges = {typ: date_range_for(typ) for typ in logtype}
 
         first_error = None
         with ThreadPoolExecutor(max_workers=num_threads) as executor:
             futures = {
                 executor.submit(
                     self.query_one, save_path, save, typ, user, max_results,
-                    max_pages, *date_range_for(typ)
+                    max_pages, *date_ranges[typ]
                 ): typ
                 for typ in logtype
             }
