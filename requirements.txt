@@ -16,7 +16,7 @@ idna==3.7
 ipython==8.10.0
 jedi==0.18.1
 matplotlib-inline==0.1.3
-numpy>=1.26.0
+numpy>=2.5.2
 oauthlib==3.2.2
 pandas>=2.2.0
 parso==0.8.5
