@@ -1,5 +1,5 @@
 #!/bin/env python3
-VERSION = '0.1.0'
+VERSION = '0.2.0'
 from setuptools import setup
 import os.path
 mydir = os.path.dirname(__file__)
@@ -12,6 +12,7 @@ setup(
     author='',
     packages=['alfa'],
     install_requires=requirements,
+    python_requires='>=3.12',
     entry_points={
         'console_scripts': [
             'alfa = alfa.__main__:main'

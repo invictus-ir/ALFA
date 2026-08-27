@@ -9,11 +9,11 @@ While it might be possible to use it on Windows or macOS, results can vary, so p
 
 # Installation
 1. Download this project
-2. Navigate to the folder in your terminal and run ```sudo pip install -e .``` or ```sudo pip3 install -e .```
+2. Navigate to the folder in your terminal and run ```pip install -e .``` or ```pip3 install -e .```
 
 ## Installation on macOS
-1. **Install Python 3.9 using `pyenv`**
-   ALFA works best with Python 3.9. You can use `pyenv` to manage and install this version.
+1. **Install Python 3.12 using `pyenv`**
+   ALFA works with Python 3.12 or above. You can use `pyenv` to manage and install this version.
    - If you haven’t installed `pyenv` yet, you can do so using Homebrew:
      ```bash
      brew install pyenv
@@ -28,20 +28,20 @@ While it might be possible to use it on Windows or macOS, results can vary, so p
      ```bash
      source ~/.zshrc  # or source ~/.bashrc
      ```
-   - Install Python 3.9 using `pyenv`:
+   - Install Python 3.12 using `pyenv`:
      ```bash
-     pyenv install 3.9
+     pyenv install 3.12
      ```
-   - Set Python 3.9 as the current version:
+   - Set Python 3.12 as the current version:
      ```bash
-     pyenv global 3.9
+     pyenv global 3.12
      ```
      or just for the current session:
     ```bash
-     pyenv shell 3.9
+     pyenv shell 3.12
      ```
 2. **(Optional) Create a Virtual Environment**
-   It’s a good practice to run projects in a virtual environment to keep dependencies isolated. Using the 3.9 version of Python you just set, create a virtual environment:
+   It’s a good practice to run projects in a virtual environment to keep dependencies isolated. Using the 3.12 version of Python you just set, create a virtual environment:
    ```bash
    python -m venv alfa
    ```
