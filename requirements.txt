@@ -9,7 +9,7 @@ google-api-core==2.34.0
 google-api-python-client>=2.150.0
 google-auth==2.47.0
 google-auth-httplib2==0.3.0
-google-auth-oauthlib==1.2.4
+google-auth-oauthlib==1.4.1
 googleapis-common-protos==1.75.2
 httplib2==0.32.0
 idna==3.19
