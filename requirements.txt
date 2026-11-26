@@ -26,7 +26,7 @@ prompt-toolkit
 protobuf==6.33.6
 ptyprocess==0.7.0
 pure-eval==0.2.2
-pyasn1==0.6.4
+pyasn1==0.6.5
 pyasn1-modules==0.4.2
 Pygments==2.21.0
 pyparsing==3.3.2
